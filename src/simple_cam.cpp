@@ -1,0 +1,51 @@
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/image.hpp"
+#include "std_msgs/msg/header.hpp"
+#include <chrono>
+#include <string>
+#include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.hpp>
+#include <opencv2/opencv.hpp>
+#include "std_msgs/msg/string.hpp"
+
+using namespace std;
+using namespace cv;
+using namespace std::chrono_literals;
+
+Mat frame1;
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+
+  auto node = rclcpp::Node::make_shared("video_publisher");
+
+  //rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher;
+  auto publisher1 = node->create_publisher<sensor_msgs::msg::Image>("video1", 10);
+  sensor_msgs::msg::Image::SharedPtr msg1;
+
+  VideoCapture cap1(1);
+  cap1.set(CAP_PROP_FRAME_WIDTH, 320);
+  cap1.set(CAP_PROP_FRAME_HEIGHT, 240);
+
+  rclcpp::WallRate loop_rate(20.0);
+
+  while(rclcpp::ok())
+  {
+    cap1 >> frame1;
+
+
+    msg1 = cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame1).toImageMsg();
+    publisher1->publish(*msg1.get()); 
+
+    rclcpp::spin_some(node);
+    loop_rate.sleep();
+
+    imshow("video1", frame1);
+
+
+    char ch = cv::waitKey(10);
+    if(ch == 27) break;
+  }
+
+}
