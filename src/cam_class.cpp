@@ -1,10 +1,12 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 
 using namespace cv;
 using namespace std;
 
+// class 개념공부하기
 class VideoPublisher : public rclcpp::Node
 {
 public:
