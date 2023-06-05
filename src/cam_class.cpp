@@ -6,7 +6,7 @@
 using namespace cv;
 using namespace std;
 
-// class 개념공부하기
+// branch에서 커밋하기
 class VideoPublisher : public rclcpp::Node
 {
 public:
