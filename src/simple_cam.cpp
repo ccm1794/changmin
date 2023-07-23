@@ -17,16 +17,22 @@ Mat frame1;
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-
   auto node = rclcpp::Node::make_shared("video_publisher");
+
+  int CameraNum;
+  node->declare_parameter("CameraNum", 0);
+  CameraNum = node->get_parameter("CameraNum").as_int();
+  cout << "연결할 카메라 번호를 쓰세요" << endl;
+  cin >> CameraNum;
 
   //rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher;
   auto publisher1 = node->create_publisher<sensor_msgs::msg::Image>("video1", 10);
   sensor_msgs::msg::Image::SharedPtr msg1;
 
-  VideoCapture cap1(1);
-  cap1.set(CAP_PROP_FRAME_WIDTH, 320);
-  cap1.set(CAP_PROP_FRAME_HEIGHT, 240);
+  VideoCapture cap1(CameraNum);
+  cap1.set(CAP_PROP_FRAME_WIDTH, 640);
+  cap1.set(CAP_PROP_FRAME_HEIGHT, 480);
+    
 
   rclcpp::WallRate loop_rate(20.0);
 
@@ -47,5 +53,8 @@ int main(int argc, char * argv[])
     char ch = cv::waitKey(10);
     if(ch == 27) break;
   }
+      
+    
+  return 0;
 
 }
